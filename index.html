@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>张家硕 · 用可量化的证据说话</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08090a;
+    --card:#0f1011;
+    --card-2:#121315;
+    --line:#1e2023;
+    --line-2:#17181a;
+    --ink:#f0f1f2;
+    --ink-2:#a0a3a8;
+    --ink-3:#6c6f75;
+    --ink-4:#4a4d52;
+    --accent:#7b87f0;
+    --accent-dim:#252a4a;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"Inter","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+  ::selection{background:var(--accent);color:#08090a}
+
+  .container{max-width:1280px;margin:0 auto;padding:0 32px}
+
+  /* ---------- 顶栏 ---------- */
+  .nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(8,9,10,.82);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav__in{
+    max-width:1280px;margin:0 auto;padding:0 32px;
+    height:56px;display:flex;align-items:center;
+    justify-content:space-between;
+  }
+  .nav__id{
+    display:flex;align-items:center;gap:10px;
+    font-size:13.5px;font-weight:600;letter-spacing:-.01em;
+  }
+  .nav__dot{
+    width:6px;height:6px;border-radius:50%;
+    background:#4ade80;box-shadow:0 0 8px #4ade8099;
+  }
+  .nav__links{display:flex;gap:26px}
+  .nav__links a{
+    color:var(--ink-3);text-decoration:none;
+    font-size:12.5px;transition:color .2s;
+  }
+  .nav__links a:hover{color:var(--ink)}
+
+  /* ---------- 首屏 ---------- */
+  .hero{padding:76px 0 56px}
+  .hero__eyebrow{
+    font-family:var(--mono);font-size:11px;
+    letter-spacing:.14em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:clamp(38px,5.2vw,62px);
+    font-weight:800;letter-spacing:-.035em;
+    line-height:1.08;max-width:19ch;
+  }
+  .hero h1 em{
+    font-style:normal;color:var(--ink-3);
+  }
+  .hero__sub{
+    margin-top:22px;max-width:56ch;
+    font-size:15px;line-height:1.8;color:var(--ink-2);
+  }
+  .hero__sub b{color:var(--ink);font-weight:600}
+  .hero__tags{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;
+  }
+  .tagchip{
+    font-family:var(--mono);font-size:11px;
+    padding:5px 11px;border-radius:6px;
+    background:var(--card);border:1px solid var(--line);
+    color:var(--ink-2);
+  }
+  .tagchip.hot{
+    background:var(--accent-dim);border-color:#39406e;
+    color:#b3bcf8;
+  }
+
+  /* ---------- Bento 网格 ---------- */
+  .bento{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;padding-bottom:80px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:20px;
+    display:flex;flex-direction:column;
+    position:relative;overflow:hidden;
+    transition:border-color .28s,background .28s,transform .28s;
+  }
+  .card:hover{
+    border-color:#2c2f35;background:var(--card-2);
+    transform:translateY(-2px);
+  }
+  .card__k{
+    font-family:var(--mono);font-size:9.5px;
+    letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-4);margin-bottom:auto;
+  }
+  .card__v{
+    font-size:32px;font-weight:800;
+    letter-spacing:-.03em;line-height:1;margin-top:16px;
+  }
+  .card__v.sm{font-size:20px}
+  .card__t{
+    font-size:13px;color:var(--ink-2);
+    margin-top:7px;line-height:1.5;
+  }
+  .card__v.accent{color:var(--accent)}
+
+  /* 大卡：旗舰项目 */
+  .card--hero{
+    grid-column:span 2;grid-row:span 2;
+    background:radial-gradient(120% 100% at 0% 0%,#151824 0%,#0d0e11 55%,#0a0b0d 100%);
+    border-color:#26293a;
+    padding:26px;
+  }
+  .card--hero::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(60% 50% at 80% 90%,#7b87f01a,transparent 70%);
+    pointer-events:none;
+  }
+  .card--hero .card__k{color:#6b74a8;margin-bottom:14px}
+  .card--hero h2{
+    font-size:clamp(22px,2.4vw,30px);font-weight:800;
+    letter-spacing:-.03em;line-height:1.2;
+    position:relative;z-index:1;
+  }
+  .card--hero h2 span{
+    display:block;font-size:13px;font-weight:400;
+    color:var(--ink-3);letter-spacing:0;
+    margin-top:10px;line-height:1.6;
+  }
+  .card--hero .figure{
+    margin-top:auto;padding-top:22px;
+    position:relative;z-index:1;
+  }
+  .card--hero .figure em{
+    font-style:normal;font-size:44px;font-weight:800;
+    color:var(--accent);letter-spacing:-.03em;line-height:1;
+  }
+  .card--hero .figure p{
+    font-family:var(--mono);font-size:11px;
+    color:var(--ink-3);margin-top:8px;letter-spacing:.04em;
+  }
+  /* 大卡内嵌的细网格背景 */
+  .card--hero .grid-bg{
+    position:absolute;inset:0;opacity:.32;
+    background-image:
+      linear-gradient(#ffffff06 1px,transparent 1px),
+      linear-gradient(90deg,#ffffff06 1px,transparent 1px);
+    background-size:32px 32px;
+    mask-image:radial-gradient(80% 70% at 70% 20%,#000 10%,transparent 72%);
+    -webkit-mask-image:radial-gradient(80% 70% at 70% 20%,#000 10%,transparent 72%);
+  }
+
+  /* 宽卡：项目 */
+  .card--wide{
+    grid-column:span 2;
+  }
+  .card--wide h3{
+    font-size:17px;font-weight:700;
+    letter-spacing:-.02em;line-height:1.35;
+    margin-bottom:8px;
+  }
+  .card--wide .org{
+    font-family:var(--mono);font-size:10.5px;
+    color:var(--accent);letter-spacing:.05em;
+    margin-bottom:12px;
+  }
+  .card--wide p{
+    font-size:13px;line-height:1.75;color:var(--ink-2);
+  }
+  .card--wide p b{color:var(--ink);font-weight:600}
+  .card--wide .meta{
+    display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;
+  }
+  .card--wide .meta span{
+    font-family:var(--mono);font-size:10px;
+    padding:3px 8px;border-radius:4px;
+    background:#17181b;color:var(--ink-3);
+    border:1px solid var(--line-2);
+  }
+
+  /* 竖长卡：技术栈 */
+  .card--tall{
+    grid-row:span 2;
+  }
+  .card--tall .stack-list{
+    display:flex;flex-direction:column;gap:14px;margin-top:18px;
+  }
+  .stack-list .grp h4{
+    font-family:var(--mono);font-size:9px;
+    letter-spacing:.14em;color:var(--ink-4);
+    text-transform:uppercase;margin-bottom:6px;
+  }
+  .stack-list .grp p{
+    font-size:12.5px;line-height:1.7;color:var(--ink-2);
+  }
+
+  /* 等宽数据条卡 */
+  .card--meter .bars{
+    margin-top:16px;display:flex;flex-direction:column;gap:11px;
+  }
+  .bar{ }
+  .bar__lbl{
+    display:flex;justify-content:space-between;
+    font-family:var(--mono);font-size:10px;
+    color:var(--ink-3);margin-bottom:5px;
+  }
+  .bar__track{
+    height:3px;background:#191a1d;border-radius:2px;overflow:hidden;
+  }
+  .bar__fill{
+    height:100%;background:var(--accent);border-radius:2px;
+    width:0;transition:width 1.1s cubic-bezier(.22,1,.36,1);
+  }
+
+  /* 个人评价：横跨整行的一句话 */
+  .card--quote{
+    grid-column:1/-1;
+    background:linear-gradient(100deg,#0f1011 0%,#101114 55%,#0e0f13 100%);
+    padding:34px 30px;
+    border-color:#23262c;
+  }
+  .card--quote .card__k{margin-bottom:16px}
+  .card--quote blockquote{
+    font-size:clamp(16px,1.9vw,21px);
+    line-height:1.75;color:var(--ink-2);
+    letter-spacing:.01em;max-width:66ch;
+    font-weight:400;
+  }
+  .quote-sign{
+    margin-top:16px;
+    font-family:var(--mono);font-size:11px;
+    color:var(--ink-4);letter-spacing:.1em;
+  }
+
+  /* 分隔标题 */
+  .sec-label{
+    grid-column:1/-1;
+    font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-4);
+    padding:26px 0 2px;
+    border-bottom:1px solid var(--line-2);
+    margin-bottom:2px;
+  }
+  .sec-label:first-child{padding-top:0}
+
+  /* ---------- 页脚 ---------- */
+  .foot{
+    border-top:1px solid var(--line);
+    padding:64px 0 48px;
+  }
+  .foot__grid{
+    display:grid;grid-template-columns:1fr auto;
+    gap:40px;align-items:end;
+  }
+  .foot h2{
+    font-size:clamp(28px,4vw,44px);font-weight:800;
+    letter-spacing:-.035em;line-height:1.12;
+  }
+  .foot h2 em{font-style:normal;color:var(--ink-4)}
+  .foot a.mail{
+    display:inline-block;margin-top:22px;
+    font-family:var(--mono);font-size:15px;
+    color:var(--accent);text-decoration:none;
+    border-bottom:1px solid #39406e;
+    padding-bottom:3px;transition:color .2s,border-color .2s;
+  }
+  .foot a.mail:hover{color:#a9b3ff;border-color:var(--accent)}
+  .foot__meta{
+    font-family:var(--mono);font-size:11px;
+    color:var(--ink-4);text-align:right;line-height:2;
+  }
+  .foot__meta div + div{margin-top:2px}
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width:980px){
+    .bento{grid-template-columns:repeat(2,1fr)}
+    .card--hero{grid-column:span 2;grid-row:span 1}
+    .card--tall{grid-row:span 1}
+    .nav__links{display:none}
+  }
+  @media (max-width:620px){
+    .container,.nav__in{padding:0 18px}
+    .bento{grid-template-columns:1fr;gap:10px}
+    .card--hero,.card--wide{grid-column:span 1}
+    .hero{padding:48px 0 36px}
+    .hero__sub{font-size:15px}
+    .card__v{font-size:28px}
+    .card--hero .figure em{font-size:36px}
+    .foot__grid{grid-template-columns:1fr}
+    .foot__meta{text-align:left;margin-top:8px}
+    body{font-size:15px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__in">
+    <div class="nav__id">
+      <span class="nav__dot"></span>
+      张家硕
+    </div>
+    <div class="nav__links">
+      <a href="#work">项目</a>
+      <a href="#stack">技术栈</a>
+      <a href="#edu">教育</a>
+      <a href="#contact">联系</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ============ 首屏 ============ -->
+  <header class="hero">
+    <div class="hero__eyebrow">Backend · Agent · Algorithm Engineer</div>
+    <h1>把 AI 与后端<br>做成<em>能交付的系统</em></h1>
+    <p class="hero__sub">
+      22 岁，Java 后端与 AI Agent 工程师。做过中科院遥感算法、29 个机房的数字孪生，
+      也拿下过 <b>80 万</b>的 Agent 项目。喜欢把复杂系统拆成干净的模块，再用可量化的结果证明它成立。
+    </p>
+    <div class="hero__tags">
+      <span class="tagchip hot">Spring AI</span>
+      <span class="tagchip hot">LangChain4j</span>
+      <span class="tagchip">Java</span>
+      <span class="tagchip">Spring Boot</span>
+      <span class="tagchip">Milvus</span>
+      <span class="tagchip">PostgreSQL</span>
+      <span class="tagchip">Docker</span>
+      <span class="tagchip">MATLAB</span>
+    </div>
+  </header>
+
+  <!-- ============ Bento ============ -->
+  <main class="bento" id="work">
+
+    <div class="sec-label">证据 / Evidence</div>
+
+    <!-- 旗舰 -->
+    <article class="card card--hero">
+      <div class="grid-bg"></div>
+      <div class="card__k">Flagship · 中国船级社</div>
+      <h2>
+        Agent 开发项目中标
+        <span>担任后端 / Agent 工程师，依甲方需求设计技术解决方案与系统架构，主导竞标。</span>
+      </h2>
+      <div class="figure">
+        <em>¥ 800,000</em>
+        <p>MARKET VALUE · 中国船级社</p>
+      </div>
+    </article>
+
+    <!-- 效率 -->
+    <article class="card">
+      <div class="card__k">Impact</div>
+      <div class="card__v accent">+100%</div>
+      <div class="card__t">员工开发效率提升<br>推动公司 AI 转型</div>
+    </article>
+
+    <!-- 绩点 -->
+    <article class="card">
+      <div class="card__k">Academic</div>
+      <div class="card__v">Top 3%</div>
+      <div class="card__t">专业绩点<br>软件技术</div>
+    </article>
+
+    <!-- 国赛 -->
+    <article class="card">
+      <div class="card__k">Award</div>
+      <div class="card__v sm">国赛二等奖</div>
+      <div class="card__t">全国大学生数学建模竞赛 · 编程手</div>
+    </article>
+
+    <!-- 机房 -->
+    <article class="card">
+      <div class="card__k">Scale</div>
+      <div class="card__v">29</div>
+      <div class="card__t">数据中心机房<br>麒麟 V10 离线部署</div>
+    </article>
+
+    <!-- 经验仪表 -->
+    <article class="card card--meter">
+      <div class="card__k">Capability</div>
+      <div class="bars">
+        <div class="bar">
+          <div class="bar__lbl"><span>Java / Spring</span><span>主</span></div>
+          <div class="bar__track"><div class="bar__fill" data-w="92%"></div></div>
+        </div>
+        <div class="bar">
+          <div class="bar__lbl"><span>AI Agent</span><span>主</span></div>
+          <div class="bar__track"><div class="bar__fill" data-w="85%"></div></div>
+        </div>
+        <div class="bar">
+          <div class="bar__lbl"><span>算法 / 数学</span><span>强</span></div>
+          <div class="bar__track"><div class="bar__fill" data-w="88%"></div></div>
+        </div>
+        <div class="bar">
+          <div class="bar__lbl"><span>运维 / 部署</span><span>熟</span></div>
+          <div class="bar__track"><div class="bar__fill" data-w="78%"></div></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 技术栈竖卡 -->
+    <article class="card card--tall" id="stack">
+      <div class="card__k">Stack</div>
+      <div class="stack-list">
+        <div class="grp"><h4>Frameworks</h4><p>Spring Boot · Spring Cloud · Spring AI · LangChain4j · ruoyi / ruoyi-plus</p></div>
+        <div class="grp"><h4>Data</h4><p>MySQL · PostgreSQL · Redis · MongoDB · Milvus</p></div>
+        <div class="grp"><h4>Infra</h4><p>Ubuntu · 麒麟 V10 · Docker · Nginx</p></div>
+        <div class="grp"><h4>Tools</h4><p>Maven · MyBatis-Plus · Git · Apifox · IDEA</p></div>
+        <div class="grp"><h4>AI Tools</h4><p>Claude Code · Codex · cc-switch · Hermes</p></div>
+        <div class="grp"><h4>Also</h4><p>C · JS · Vue · Python · MATLAB</p></div>
+      </div>
+    </article>
+
+    <div class="sec-label">项目 / Selected Work</div>
+
+    <article class="card card--wide">
+      <div class="card__k">中国科学院空天信息创新研究院</div>
+      <h3>张家口市域农业全产业链信息化</h3>
+      <div class="org">算法工程师 · 独立负责</div>
+      <p>
+        大斑病、锈病预测预警算法。从 Sentinel-2 提取 <b>MSI</b> 与 <b>REP</b> 植被指数构建多年基线，
+        用 delta/std 异常检测 + <b>Jenks 自然断点</b>实现长势异常四分类；结合 ERA5-Land 气候数据建模病变环境条件，
+        DEM 校正后重采样至 <b>10m</b> 与遥感栅格对齐，端到端 Python 流水线支持多区域批量运行。
+      </p>
+      <div class="meta">
+        <span>Sentinel-2</span><span>ERA5-Land</span><span>Jenks</span><span>Python</span><span>10m 栅格</span>
+      </div>
+    </article>
+
+    <article class="card card--wide">
+      <div class="card__k">国研数字科技</div>
+      <h3>智慧机房数字孪生</h3>
+      <div class="org">后端工程师 / 运维工程师</div>
+      <p>
+        中国火箭军 <b>29 个数据中心机房</b>的一体化运维平台，涵盖设备生命周期、动环监控、3D 数字可视化。
+        独立负责设备信息、机房设施等核心模块后端，完成数据库设计到 RESTful API 全流程；
+        编写一键部署脚本，完成 29 个机房 <b>麒麟 V10</b> 离线部署与维护。
+      </p>
+      <div class="meta">
+        <span>微服务</span><span>Docker</span><span>麒麟 V10</span><span>RESTful</span><span>离线部署</span>
+      </div>
+    </article>
+
+    <article class="card card--wide">
+      <div class="card__k">河北工业职业技术大学</div>
+      <h3>校园 AI 钢宝</h3>
+      <div class="org">后端工程师 / Agent 工程师</div>
+      <p>
+        对话式校务助手，用户端<b>权限分级、向下兼容</b>。设计对话聊天架构：AI 助理、系统提示词、
+        <b>MCP</b>、工具提示词、<b>RAG 知识库动态加载</b>；实现系统提示词动态优化与用户专属助手，
+        编写数据库 MCP，完成复杂课程表智能解析入库。
+      </p>
+      <div class="meta">
+        <span>MCP</span><span>RAG</span><span>权限模型</span><span>动态提示词</span>
+      </div>
+    </article>
+
+    <article class="card card--wide">
+      <div class="card__k">全国大学生数学建模竞赛 · 国赛二等奖</div>
+      <h3>多维联合正态分布的深弹最大命中概率</h3>
+      <div class="org">核心建模与算法实现</div>
+      <p>
+        建立二维正态分布模型求解最优投弹坐标；引入单边截尾正态 + 截断因子构建三维联合正态模型。
+        设计三维引爆空间，将命中区域拆为长方体、球体、圆柱等 <b>26 类子区域</b>精准积分；
+        MATLAB 三重积分 + 梯度下降寻优，建立 <b>9 枚深弹阵列模型</b>，蒙特卡洛验证。
+      </p>
+      <div class="meta">
+        <span>联合正态</span><span>截尾分布</span><span>三重积分</span><span>梯度下降</span><span>蒙特卡洛</span>
+      </div>
+    </article>
+
+    <div class="sec-label" id="edu">教育与实习 / Background</div>
+
+    <article class="card card--wide">
+      <div class="card__k">Experience</div>
+      <h3>航景信泽（北京）科技有限公司</h3>
+      <div class="org">2026.02 — 2026.08 · 后端 / Agent / 运维 / 算法</div>
+      <p>
+        推进公司 AI 软件开发转型，定制 AI 工具开发流程规范；参与中国船级社、国家自然科学基金委员会等单位的
+        AI 应用项目竞标并拿下 80 万项目；完整参与中科院算法项目与智慧机房数字孪生从设计到交付的<b>全流程</b>。
+      </p>
+    </article>
+
+    <article class="card card--wide">
+      <div class="card__k">Education</div>
+      <h3>河北工程技术学院 · 人工智能（本科）</h3>
+      <div class="org">河北工业职业技术大学 · 软件技术（专科）</div>
+      <p>
+        专科绩点专业前 3%，任组织委员。经选拔进入软件技术实战班任项目组长，长期承接学校与企业项目。
+        导师：<b>刘旭超</b> — 前 21 世纪教育集团 CTO、河北光域未来科技有限公司创始人。
+      </p>
+      <div class="meta">
+        <span>绩点 Top 3%</span><span>组织委员</span><span>实战班项目组长</span>
+      </div>
+    </article>
+
+    <article class="card card--quote">
+      <div class="card__k">About</div>
+      <blockquote>
+        热爱代码并专注于技术提升。核心技能覆盖后端开发（Java / Spring Boot）与数据结构算法，
+        具备丰富的业务系统开发经验。
+      </blockquote>
+      <div class="quote-sign">— 张家硕</div>
+    </article>
+
+  </main>
+</div>
+
+<!-- ============ 页脚 ============ -->
+<footer class="foot" id="contact">
+  <div class="container">
+    <div class="foot__grid">
+      <div>
+        <h2>有系统要做？<br><em>聊聊。</em></h2>
+        <a class="mail" href="mailto:2358137889@qq.com">2358137889@qq.com</a>
+      </div>
+      <div class="foot__meta">
+        <div>张家硕</div>
+        <div>Backend · Agent · Algorithm</div>
+        <div>河北 · 中国</div>
+        <div>2026</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 能力条进入视口时展开
+  const fills = [...document.querySelectorAll('.bar__fill')];
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.width = e.target.dataset.w;
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: .4 });
+    fills.forEach(f => io.observe(f));
+  } else {
+    fills.forEach(f => f.style.width = f.dataset.w);
+  }
+</script>
+</body>
+</html>
